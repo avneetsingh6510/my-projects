@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <style>
+        body.light-theme {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 2px;
+            font-size: 2rem;
+            font-weight: bolder;
+            color: darkblue;
+            background-color: pink;
+        }
+
+        body.dark-theme {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 2px;
+            font-size: 2rem;
+            font-weight: bolder;
+            color: white;
+            background-color: #333;
+        }
+
+        h2 {
+            text-decoration: red underline;
+        }
+
+        #game {
+            text-align: center;
+        }
+
+        .option {
+            display: inline-block;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        #result {
+            font-size: 2rem;
+            margin-top: 20px;
+        }
+
+        .card {
+            height: 200px;
+            width: 220px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.337);
+            transition: 0.3s;
+            border-radius: 20px;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgb(228, 34, 34);
+        }
+
+        img {
+            height: 150px;
+            width: 150px;
+            padding-top: 23px;
+        }
+
+        #rock {
+            background-color: #9FE2BF;
+        }
+
+        #paper {
+            background-color: #CCCCFF;
+        }
+
+        #scissors {
+            background-color: #FFBF00;
+        }
+
+        table {
+            width: 110%;
+        }
+
+        /* CSS */
+        button {
+            padding: 0.6em 2em;
+            border: none;
+            outline: none;
+            color: rgb(255, 255, 255);
+            background: #2F539B;
+            cursor: pointer;
+            position: relative;
+            z-index: 0;
+            border-radius: 10px;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        button:before {
+            content: "";
+            background: linear-gradient(
+                45deg,
+                #ff0000,
+                #ff7300,
+                #fffb00,
+                #48ff00,
+                #00ffd5,
+                #002bff,
+                #7a00ff,
+                #ff00c8,
+                #ff0000
+            );
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            background-size: 400%;
+            z-index: -1;
+            filter: blur(5px);
+            -webkit-filter: blur(5px);
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            animation: glowing-button-85 20s linear infinite;
+            transition: opacity 0.3s ease-in-out;
+            border-radius: 10px;
+        }
+
+        @keyframes glowing-button {
+            0% {
+                background-position: 0 0;
+            }
+
+            50% {
+                background-position: 400% 0;
+            }
+
+            100% {
+                background-position: 0 0;
+            }
+        }
+
+        button:after {
+            z-index: -1;
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #000080;
+            left: 0;
+            top: 0;
+            border-radius: 10px;
+        }
+
+        /* Move the toggle button */
+        .toggle-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        /* Media Queries */
+        @media only screen and (max-width: 768px) {
+            .card {
+                width: 150px;
+            }
+        }
+
+        @media only screen and (max-width: 480px) {
+            .card {
+                width: 120px;
+            }
+
+            img {
+                height: 100px;
+                width: 100px;
+            }
+
+            button {
+                padding: 0.4em 1.5em;
+            }
+        }
+    </style>
+</head>
+
+<body class="light-theme">
+
+    <div id="game">
+        <h2>Rock Paper Scissors</h2>
+
+        <table>
+            <tr>
+                <th>
+                    <div class="card" id="rock">
+                        <div class="option" onclick="play('rock')"><img src="rock.jpg" alt="Rock"></div>
+                    </div>
+                </th>
+                <th>
+                    <div class="card" id="paper">
+                        <div class="option" onclick="play('paper')"><img src="paper.jpg" alt="Paper"></div>
+                    </div>
+                </th>
+                <th>
+                    <div class="card" id="scissors">
+                        <div class="option" onclick="play('scissors')"><img src="scissors.jpg" alt="Scissors"></div>
+                    </div>
+                </th>
+            </tr>
+
+            <tr>
+                <th colspan="3">
+                    <div id="result"></div>
+                </th>
+            </tr>
+            <tr>
+                <div>
+                    <th><span>Wins: </span><span id="wins">0</span><br></th>
+                    <th><span>Losses: </span><span id="losses">0</span><br></th>
+                    <th><span>Ties: </span><span id="ties">0</span><br></th>
+                </div>
+            </tr>
+        </table>
+
+        <!-- Toggle Theme Button -->
+        <button class="toggle-btn" onclick="toggleTheme()">Toggle Theme</button>
+
+        <!-- Reset Button -->
+        <button onclick="resetGame()" style="margin-top: 20px;">Reset Game</button>
+    </div>
+
+    <script>
+        var wins = 0;
+        var losses = 0;
+        var ties = 0;
+
+        function updateScore() {
+            document.getElementById("wins").innerText = wins;
+            document.getElementById("losses").innerText = losses;
+            document.getElementById("ties").innerText = ties;
+        }
+
+        function play(playerChoice) {
+            var choices = ["rock", "paper", "scissors"];
+            var computerChoice = choices[Math.floor(Math.random() * 3)];
+
+            var result = "";
+
+            if (playerChoice === computerChoice) {
+                result = "It's a tie!\n\n";
+                ties++;
+            } else if (
+                (playerChoice === "rock" && computerChoice === "scissors") ||
+                (playerChoice === "paper" && computerChoice === "rock") ||
+                (playerChoice === "scissors" && computerChoice === "paper")
+            ) {
+                result = "You win! " + playerChoice.charAt(0).toUpperCase() + playerChoice.slice(1) + " beats " + computerChoice + ".\n\n";
+                wins++;
+            } else {
+                result = "You lose! " + computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1) + " beats " + playerChoice + ".\n\n";
+                losses++;
+            }
+
+            document.getElementById("result").innerText = "You choosed -> " + playerChoice + "\n Computer -> " + computerChoice + "\n\n" + result;
+            updateScore();
+        }
+
+        function resetGame() {
+            wins = 0;
+            losses = 0;
+            ties = 0;
+            updateScore();
+            document.getElementById("result").innerText = "";
+        }
+
+        function toggleTheme() {
+            var body = document.body;
+            if (body.classList.contains("dark-theme")) {
+                body.classList.remove("dark-theme");
+                body.classList.add("light-theme");
+            } else {
+                body.classList.remove("light-theme");
+                body.classList.add("dark-theme");
+            }
+        }
+    </script>
+
+</body>
+
+</html>
